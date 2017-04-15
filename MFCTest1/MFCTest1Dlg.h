@@ -46,4 +46,7 @@ public:
 private:
 	int picture_x;
 	int picture_y;
+public:
+	afx_msg void OnEnChangeEdit1();
+	CEdit show_text;
 };

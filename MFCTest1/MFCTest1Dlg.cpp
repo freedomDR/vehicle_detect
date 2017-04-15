@@ -61,6 +61,7 @@ void CMFCTest1Dlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_SHARE, picture_share);
 	DDX_Control(pDX, PAUSE, stopbtn);
+	DDX_Control(pDX, IDC_EDIT1, show_text);
 }
 
 BEGIN_MESSAGE_MAP(CMFCTest1Dlg, CDialogEx)
@@ -70,6 +71,7 @@ BEGIN_MESSAGE_MAP(CMFCTest1Dlg, CDialogEx)
 	ON_BN_CLICKED(PAUSE, &CMFCTest1Dlg::OnBnClickedPause)
 	ON_BN_CLICKED(IDC_BTN_END, &CMFCTest1Dlg::OnBnClickedBtnEnd)
 	ON_BN_CLICKED(BTNSTART, &CMFCTest1Dlg::OnBnClickedBtnstart)
+	ON_EN_CHANGE(IDC_EDIT1, &CMFCTest1Dlg::OnEnChangeEdit1)
 END_MESSAGE_MAP()
 
 
@@ -173,7 +175,8 @@ HCURSOR CMFCTest1Dlg::OnQueryDragIcon()
 
 UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 {
-	VideoCapture capture("D:\\mouse.mp4");
+	VideoCapture capture("D:\\video_test_1.mp4");
+	//VideoCapture capture(0);
 	Mat pictureBackground;
 	int frame_order = 0;
 	//VideoCapture capture(0);
@@ -203,13 +206,17 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 			if (CMFCTest1Dlg::playFlag == 0)
 			{
 				
-				if(!capture.read(frame)) break;
-				Mat mid;
-				if (frame_order % 200 == 0)
+				
+				if (frame_order % 10 == 0)
 				{
 					pictureBackground = MyTools::getPictureBackground(capture, frame_order);
-					imshow("123", pictureBackground);
+					medianBlur(pictureBackground, pictureBackground, 3);
+					//
+					Mat mid_three;
+					resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
+					imshow("背景图", mid_three);
 					imwrite("lala.jpg",pictureBackground);
+					
 				}
 				//cvtColor(pictureBackground, mid, COLOR_BGR2GRAY);
 				//Mat element = getStructuringElement(MORPH_RECT, Size(15, 15));
@@ -218,14 +225,37 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 				//blur(mid, mid, Size(7, 7));
 				//Canny(mid, mid, 0, 30, 3);
 				
+				if (!capture.read(frame)) break;
+				Mat mid;
+				cvtColor(frame, frame, COLOR_BGR2GRAY);
+				medianBlur(frame, frame, 3);
+
+				Mat mid_one,mid_two;
+				resize(frame, mid_one, Size(this_back->picture_y, this_back->picture_x));
+				imshow("frame_median.jpg", mid_one);
+				subtract(frame, pictureBackground, frame);
+				resize(frame, mid_two, Size(this_back->picture_y, this_back->picture_x));
+				imshow("差分图.jpg", mid_two);
+
 				//重置大小，满足需求
-				addWeighted(frame,1,pictureBackground,-1,0,frame);
 				Mat des = Mat::zeros(this_back->picture_x, this_back->picture_y, CV_8UC3);
 				resize(frame, des, des.size());
+				
+				
+				Mat dst;
+				double thres_value;
+				thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
+				
+				//Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
+				//erode(dst, dst, element);
 
+				CString mid_value;
+				mid_value.Format(L"%lf", thres_value);
+				//this_back->show_text.SetWindowTextW(mid_value);
+				this_back->SetDlgItemText(IDC_EDIT1, mid_value);
+				
 
-
-				imshow("view", des);
+				imshow("view", dst);
 				
 				frame_order++;
 			}
@@ -239,6 +269,8 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 	capture.release();
 	return 0;
 }
+
+
 
 void CMFCTest1Dlg::OnBnClickedPause()
 {
@@ -279,3 +311,13 @@ void CMFCTest1Dlg::OnBnClickedBtnstart()
 }
 
 int CMFCTest1Dlg::playFlag = 2;
+
+void CMFCTest1Dlg::OnEnChangeEdit1()
+{
+	// TODO:  如果该控件是 RICHEDIT 控件，它将不
+	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
+	// 函数并调用 CRichEditCtrl().SetEventMask()，
+	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+	// TODO:  在此添加控件通知处理程序代码
+}
