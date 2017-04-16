@@ -40,6 +40,7 @@ public:
 	CWinThread* playThread;
 	CButton stopbtn;
 	static int playFlag;
+	static bool FirstDeal(LPVOID param, VideoCapture & capture,Mat& pictureBackground);
 	afx_msg void OnBnClickedPause();
 	afx_msg void OnBnClickedBtnEnd();
 	afx_msg void OnBnClickedBtnstart();

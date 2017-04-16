@@ -205,58 +205,9 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 			}
 			if (CMFCTest1Dlg::playFlag == 0)
 			{
+				//第一种处理方法
 				
-				
-				if (frame_order % 10 == 0)
-				{
-					pictureBackground = MyTools::getPictureBackground(capture, frame_order);
-					medianBlur(pictureBackground, pictureBackground, 3);
-					//
-					Mat mid_three;
-					resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
-					imshow("背景图", mid_three);
-					imwrite("lala.jpg",pictureBackground);
-					
-				}
-				//cvtColor(pictureBackground, mid, COLOR_BGR2GRAY);
-				//Mat element = getStructuringElement(MORPH_RECT, Size(15, 15));
-				//Mat dstImage;
-				//erode(frame, dstImage, element);
-				//blur(mid, mid, Size(7, 7));
-				//Canny(mid, mid, 0, 30, 3);
-				
-				if (!capture.read(frame)) break;
-				Mat mid;
-				cvtColor(frame, frame, COLOR_BGR2GRAY);
-				medianBlur(frame, frame, 3);
-
-				Mat mid_one,mid_two;
-				resize(frame, mid_one, Size(this_back->picture_y, this_back->picture_x));
-				imshow("frame_median.jpg", mid_one);
-				subtract(frame, pictureBackground, frame);
-				resize(frame, mid_two, Size(this_back->picture_y, this_back->picture_x));
-				imshow("差分图.jpg", mid_two);
-
-				//重置大小，满足需求
-				Mat des = Mat::zeros(this_back->picture_x, this_back->picture_y, CV_8UC3);
-				resize(frame, des, des.size());
-				
-				
-				Mat dst;
-				double thres_value;
-				thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
-				
-				//Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
-				//erode(dst, dst, element);
-
-				CString mid_value;
-				mid_value.Format(L"%lf", thres_value);
-				//this_back->show_text.SetWindowTextW(mid_value);
-				this_back->SetDlgItemText(IDC_EDIT1, mid_value);
-				
-
-				imshow("view", dst);
-				
+				CMFCTest1Dlg::FirstDeal(pParam, capture,pictureBackground);
 				frame_order++;
 			}
 			if (CMFCTest1Dlg::playFlag == 3)
@@ -271,6 +222,63 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 }
 
 
+
+bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBackground)
+{
+	int frame_order = capture.get(CV_CAP_PROP_POS_FRAMES);
+	Mat frame;
+	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)param;
+	if (frame_order % 10 == 0)
+	{
+		pictureBackground = MyTools::getPictureBackground(capture, frame_order);
+		medianBlur(pictureBackground, pictureBackground, 3);
+		//
+		Mat mid_three;
+		resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
+		imshow("背景图", mid_three);
+		imwrite("lala.jpg", pictureBackground);
+
+	}
+	//cvtColor(pictureBackground, mid, COLOR_BGR2GRAY);
+	//Mat element = getStructuringElement(MORPH_RECT, Size(15, 15));
+	//Mat dstImage;
+	//erode(frame, dstImage, element);
+	//blur(mid, mid, Size(7, 7));
+	//Canny(mid, mid, 0, 30, 3);
+
+	if (!capture.read(frame)) return false;
+	Mat mid;
+	cvtColor(frame, frame, COLOR_BGR2GRAY);
+	medianBlur(frame, frame, 3);
+
+	Mat mid_one, mid_two;
+	resize(frame, mid_one, Size(this_back->picture_y, this_back->picture_x));
+	imshow("frame_median.jpg", mid_one);
+	subtract(frame, pictureBackground, frame);
+	resize(frame, mid_two, Size(this_back->picture_y, this_back->picture_x));
+	imshow("差分图.jpg", mid_two);
+
+	//重置大小，满足需求
+	Mat des = Mat::zeros(this_back->picture_x, this_back->picture_y, CV_8UC3);
+	resize(frame, des, des.size());
+
+
+	Mat dst;
+	double thres_value;
+	thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
+
+	//Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
+	//erode(dst, dst, element);
+
+	CString mid_value;
+	mid_value.Format(L"%lf", thres_value);
+	//this_back->show_text.SetWindowTextW(mid_value);
+	this_back->SetDlgItemText(IDC_EDIT1, mid_value);
+
+
+	imshow("view", dst);
+	return false;
+}
 
 void CMFCTest1Dlg::OnBnClickedPause()
 {
@@ -321,3 +329,5 @@ void CMFCTest1Dlg::OnEnChangeEdit1()
 
 	// TODO:  在此添加控件通知处理程序代码
 }
+
+

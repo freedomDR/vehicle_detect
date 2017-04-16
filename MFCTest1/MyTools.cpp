@@ -22,7 +22,7 @@ Mat MyTools::getPictureBackground(VideoCapture& capture, int order)
 	//absdiff(mid, mid, mid);
 	//imwrite("first.jpg", mid);
 	//capture.set(CV_CAP_PROP_POS_FRAMES, order);
-	mid.create(Size(capture.get(CV_CAP_PROP_FRAME_WIDTH), capture.get(CV_CAP_PROP_FRAME_HEIGHT)), CV_8UC3);
+	mid.create(Size(capture.get(CV_CAP_PROP_FRAME_WIDTH), capture.get(CV_CAP_PROP_FRAME_HEIGHT)), capture.get(CV_CAP_PROP_FORMAT));
 	for (int i = 0; i < 25; i++) {
 		if (!capture.read(mmid)) break;
 		cvtColor(mmid, mmid, COLOR_BGR2GRAY);
