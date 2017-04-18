@@ -175,7 +175,7 @@ HCURSOR CMFCTest1Dlg::OnQueryDragIcon()
 
 UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 {
-	VideoCapture capture("D:\\video_test_1.mp4");
+	VideoCapture capture("D:\\test.avi");
 	//VideoCapture capture(0);
 	Mat pictureBackground;
 	int frame_order = 0;
@@ -228,7 +228,7 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	int frame_order = capture.get(CV_CAP_PROP_POS_FRAMES);
 	Mat frame;
 	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)param;
-	if (frame_order % 10 == 0)
+	if (frame_order % 1000 == 0)
 	{
 		pictureBackground = MyTools::getPictureBackground(capture, frame_order);
 		medianBlur(pictureBackground, pictureBackground, 3);
@@ -267,12 +267,13 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	double thres_value;
 	thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
 
-	//Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
-	//erode(dst, dst, element);
+	Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
+	erode(dst, dst, element);
+	dilate(dst, dst, element);
 
 	CString mid_value;
 	mid_value.Format(L"%lf", thres_value);
-	//this_back->show_text.SetWindowTextW(mid_value);
+	this_back->show_text.SetWindowTextW(mid_value);
 	this_back->SetDlgItemText(IDC_EDIT1, mid_value);
 
 
