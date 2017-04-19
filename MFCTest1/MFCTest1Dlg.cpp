@@ -247,7 +247,8 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	//Canny(mid, mid, 0, 30, 3);
 
 	if (!capture.read(frame)) return false;
-	Mat mid;
+	Mat mid,frame_mid;
+	frame.copyTo(frame_mid);
 	cvtColor(frame, frame, COLOR_BGR2GRAY);
 	medianBlur(frame, frame, 3);
 
@@ -266,10 +267,16 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	Mat dst;
 	double thres_value;
 	thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
+	imwrite("D:\\dst.jpg", dst);
 
-	Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
-	erode(dst, dst, element);
-	dilate(dst, dst, element);
+	Mat element = getStructuringElement(MORPH_RECT, Size(1, 1));
+	Mat element_dilate = getStructuringElement(MORPH_RECT, Size(7, 7));
+	Mat erode_mat, dilate_mat;
+	dilate(dst, dilate_mat, element_dilate);
+	erode(dilate_mat, erode_mat, element);
+	
+	
+	
 
 	CString mid_value;
 	mid_value.Format(L"%lf", thres_value);
@@ -277,7 +284,16 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	this_back->SetDlgItemText(IDC_EDIT1, mid_value);
 
 
-	imshow("view", dst);
+	//morphologyEx()
+
+	resize(frame_mid, frame_mid, Size(this_back->picture_y, this_back->picture_x));
+
+	vector<vector<Point>> countours;
+	findContours(erode_mat, countours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+	drawContours(frame_mid, countours, -1, Scalar(0, 255, 255), 1, 8);
+
+
+	imshow("view", frame_mid);
 	return false;
 }
 

@@ -26,11 +26,11 @@ Mat MyTools::getPictureBackground(VideoCapture& capture, int order)
 	//mid.create(Size(capture.get(CV_CAP_PROP_FRAME_WIDTH), capture.get(CV_CAP_PROP_FRAME_HEIGHT)), value);
 	mid = Mat::zeros(Size(capture.get(CV_CAP_PROP_FRAME_WIDTH), capture.get(CV_CAP_PROP_FRAME_HEIGHT)), value);
 	imwrite("first.jpg", mid);
-	for (int i = 0; i < 25; i++) {
+	for (int i = 0; i < 20; i++) {
 		if (!capture.read(mmid)) break;
 		cvtColor(mmid, mmid, COLOR_BGR2GRAY);
 		//medianBlur(mmid, mmid, 3);
-		addWeighted(mid, 1, mmid, 0.04, 0, mid);
+		addWeighted(mid, 1, mmid, 0.05, 0, mid);
 	}
 	//mmid = mmid / 30;
 	capture.set(CV_CAP_PROP_POS_FRAMES, order);
