@@ -288,9 +288,25 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 
 	resize(frame_mid, frame_mid, Size(this_back->picture_y, this_back->picture_x));
 
-	vector<vector<Point>> countours;
+	vector<vector<Point>> countours,deal_contours;
+	vector<Point> approx;
 	findContours(erode_mat, countours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-	drawContours(frame_mid, countours, -1, Scalar(0, 255, 255), 1, 8);
+	for (size_t i = 0; i < countours.size(); i++)
+	{
+		approxPolyDP(Mat(countours[i]), approx, arcLength(Mat(countours[i]), true)*0.02, true);
+
+		if (approx.size() >= 3 && contourArea(Mat(countours[i])) > 10)
+		{
+			deal_contours.push_back(countours[i]);
+		}
+	}
+	for (size_t i = 0; i < deal_contours.size(); i++) 
+	{
+		//const Point* p = &deal_contours[i][0];
+		Rect rect = boundingRect(deal_contours[i]);
+		rectangle(frame_mid, rect, Scalar(0, 255, 255), 1, 8);
+	}
+	//drawContours(frame_mid, deal_contours, -1, Scalar(0, 255, 255), 1, 8);
 
 
 	imshow("view", frame_mid);
