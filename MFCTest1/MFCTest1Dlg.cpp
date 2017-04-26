@@ -235,8 +235,8 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 		//
 		Mat mid_three;
 		resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
-		imshow("±≥æ∞Õº", mid_three);
-		imwrite("lala.jpg", pictureBackground);
+		//imshow("±≥æ∞Õº", mid_three);
+		//imwrite("lala.jpg", pictureBackground);
 
 	}
 	//cvtColor(pictureBackground, mid, COLOR_BGR2GRAY);
@@ -254,10 +254,10 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 
 	Mat mid_one, mid_two;
 	resize(frame, mid_one, Size(this_back->picture_y, this_back->picture_x));
-	imshow("frame_median.jpg", mid_one);
-	subtract(frame, pictureBackground, frame);
+	//imshow("frame_median.jpg", mid_one);
+	absdiff(frame, pictureBackground, frame);
 	resize(frame, mid_two, Size(this_back->picture_y, this_back->picture_x));
-	imshow("≤Ó∑÷Õº.jpg", mid_two);
+	imshow("≤Ó∑÷Õº", mid_two);
 
 	//÷ÿ÷√¥Û–°£¨¬˙◊„–Ë«Û
 	Mat des = Mat::zeros(this_back->picture_x, this_back->picture_y, CV_8UC3);
@@ -267,14 +267,15 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	Mat dst;
 	double thres_value;
 	thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
-	imwrite("D:\\dst.jpg", dst);
+	//imwrite("D:\\dst.jpg", dst);
+	imshow("∂˛÷µªØÕº", dst);
 
 	Mat element = getStructuringElement(MORPH_RECT, Size(1, 1));
-	Mat element_dilate = getStructuringElement(MORPH_RECT, Size(7, 7));
-	Mat erode_mat, dilate_mat;
-	dilate(dst, dilate_mat, element_dilate);
-	erode(dilate_mat, erode_mat, element);
-	
+	Mat element_dilate = getStructuringElement(MORPH_RECT, Size(3, 3));
+	erode(dst, dst, element);
+	imshow("∏Ø ¥Õº", dst);
+	dilate(dst, dst, element_dilate);
+	imshow("≈Ú’ÕÕº", dst);
 	
 	
 
@@ -290,10 +291,11 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 
 	vector<vector<Point>> countours,deal_contours;
 	vector<Point> approx;
-	findContours(erode_mat, countours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+	findContours(dst, countours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 	for (size_t i = 0; i < countours.size(); i++)
 	{
-		approxPolyDP(Mat(countours[i]), approx, arcLength(Mat(countours[i]), true)*0.02, true);
+		//approxPolyDP(Mat(countours[i]), approx, arcLength(Mat(countours[i]), true)*0.02, true);
+		approxPolyDP(Mat(countours[i]), approx, 3, true);
 
 		if (approx.size() >= 3 && contourArea(Mat(countours[i])) > 10)
 		{
