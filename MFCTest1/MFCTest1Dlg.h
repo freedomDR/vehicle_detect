@@ -4,6 +4,7 @@
 
 #pragma once
 #include "afxwin.h"
+#include "Blob.h"
 
 
 // CMFCTest1Dlg ¶Ô»°¿ò
@@ -50,4 +51,5 @@ private:
 public:
 	afx_msg void OnEnChangeEdit1();
 	CEdit show_text;
+	vector<Blob> blobs;
 };

@@ -295,11 +295,21 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	for (size_t i = 0; i < countours.size(); i++)
 	{
 		//approxPolyDP(Mat(countours[i]), approx, arcLength(Mat(countours[i]), true)*0.02, true);
-		approxPolyDP(Mat(countours[i]), approx, 3, true);
+		approxPolyDP(Mat(countours[i]), approx, 0.5, true);
 
-		if (approx.size() >= 3 && contourArea(Mat(countours[i])) > 10)
+		if (approx.size() >= 3 && contourArea(Mat(countours[i])) > 50 && contourArea(Mat(countours[i])) < 2000)
 		{
 			deal_contours.push_back(countours[i]);
+			Rect rect = boundingRect(countours[i]);
+			Blob mid;
+			mid.rect = rect;
+			mid.id = this_back->blobs.size() + 1;
+			Moments m;
+			m = moments(approx);
+			mid.xx = m.m10 / m.m00;
+			mid.yy = m.m01 / m.m00;
+			this_back->blobs.push_back(mid);
+			circle(frame_mid, Point(mid.xx, mid.yy), 5, Scalar(0.234, 243));
 		}
 	}
 	for (size_t i = 0; i < deal_contours.size(); i++) 
