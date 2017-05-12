@@ -64,6 +64,7 @@ void CMFCTest1Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, PAUSE, stopbtn);
 	DDX_Control(pDX, IDC_EDIT1, show_text);
 	DDX_Control(pDX, IDC_SPLIT1, choose);
+	DDX_Control(pDX, IDC_EDIT2,show_text2);
 }
 
 BEGIN_MESSAGE_MAP(CMFCTest1Dlg, CDialogEx)
@@ -182,12 +183,14 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)pParam;
 	VideoCapture capture;
 	VehicleDetector vehicleDetector;
+	PeopleDetector peopleDetector;
 	if (this_back->current_func== VERICHL_COUNT)
 	{
-		capture.open("D:\\test.avi");
+		capture.open("D:\\MFC\\新建文件夹\\example\\example.avi");
 	}
-	if (this_back->current_func == PEOPLE_DETECT) {
-		capture.open("D:\\test2.mp4");
+	if (this_back->current_func == PEOPLE_DETECT) 
+	{
+		capture.open("D:\\MFC\\新建文件夹\\example\\xiaoche.avi");
 	}
 	if (this_back->current_func == NO_FUNCTION)
 	{
@@ -222,7 +225,8 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 				}
 				if (this_back->current_func == PEOPLE_DETECT)
 				{
-					//PeopleDetector::process(capture, pParam);
+					peopleDetector.process2(capture, pParam);
+					
 				}
 				frame_order++;
 			}
@@ -259,6 +263,8 @@ void CMFCTest1Dlg::OnBnClickedPause()
 void CMFCTest1Dlg::OnBnClickedBtnEnd()
 {
 	CMFCTest1Dlg::playFlag = 3;
+	count = 0;
+	count2 = 0;
 	::PostThreadMessage(playThread->m_nThreadID, WM_QUIT, 0, 0);
 }
 

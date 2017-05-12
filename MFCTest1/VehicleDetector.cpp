@@ -39,7 +39,7 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	//imshow("frame_median.jpg", mid_one);
 	absdiff(frame, pictureBackground, frame);
 	resize(frame, mid_two, Size(this_back->picture_y, this_back->picture_x));
-	imshow("²î·ÖÍ¼", mid_two);
+	//imshow("²î·ÖÍ¼", mid_two);
 
 	//ÖØÖÃ´óÐ¡£¬Âú×ãÐèÇó
 	Mat des = Mat::zeros(this_back->picture_x, this_back->picture_y, CV_8UC3);
@@ -50,14 +50,14 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	double thres_value;
 	thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
 	//imwrite("D:\\dst.jpg", dst);
-	imshow("¶þÖµ»¯Í¼", dst);
+	//imshow("¶þÖµ»¯Í¼", dst);
 
 	Mat element = getStructuringElement(MORPH_RECT, Size(1, 1));
 	Mat element_dilate = getStructuringElement(MORPH_RECT, Size(3, 3));
 	erode(dst, dst, element);
-	imshow("¸¯Ê´Í¼", dst);
+	//imshow("¸¯Ê´Í¼", dst);
 	dilate(dst, dst, element_dilate);
-	imshow("ÅòÕÍÍ¼", dst);
+	//imshow("ÅòÕÍÍ¼", dst);
 
 
 	
@@ -88,7 +88,8 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 			mid.yy = m.m01 / m.m00;
 			this_back->blobs.push_back(mid);
 			circle(frame_mid, Point(mid.xx, mid.yy), 5, Scalar(0.234, 243));
-			if (mid.yy<=230&& mid.yy>=120 && mid.xx > 97&& mid.xx<103) this_back->count++;
+			if (mid.yy<=230&& mid.yy>=120 && mid.xx > 96&& mid.xx<105) this_back->count++;
+			if (mid.yy <= 380 && mid.yy >= 220 && mid.xx > 380 && mid.xx<410) this_back->count2++;
 			
 		}
 	}
@@ -99,9 +100,14 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 		rectangle(frame_mid, rect, Scalar(0, 255, 255), 1, 8);
 	}
 	
-	line(frame_mid, Point(100, 120), Point(100, 230), Scalar(0, 0, 255), 2);
+	line(frame_mid, Point(100, 140), Point(100, 230), Scalar(0, 0, 255), 2);
+	line(frame_mid, Point(400, 230), Point(400, 380), Scalar(255, 0, 0), 2);
 	CString mid_value;
+	CString mid_value2;
+	
 	mid_value.Format(L"%d", this_back->count);
+	mid_value2.Format(L"%d", this_back->count2);
 	this_back->show_text.SetWindowTextW(mid_value);
+	this_back->show_text2.SetWindowTextW(mid_value2);
 	imshow("view", frame_mid);
 }
