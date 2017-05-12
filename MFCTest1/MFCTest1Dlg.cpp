@@ -7,7 +7,8 @@
 #include "MFCTest1Dlg.h"
 #include "afxdialogex.h"
 #include "MyTools.h"
-
+#include "VehicleDetector.h"
+#include "PeopleDetector.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -62,6 +63,7 @@ void CMFCTest1Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SHARE, picture_share);
 	DDX_Control(pDX, PAUSE, stopbtn);
 	DDX_Control(pDX, IDC_EDIT1, show_text);
+	DDX_Control(pDX, IDC_SPLIT1, choose);
 }
 
 BEGIN_MESSAGE_MAP(CMFCTest1Dlg, CDialogEx)
@@ -71,7 +73,8 @@ BEGIN_MESSAGE_MAP(CMFCTest1Dlg, CDialogEx)
 	ON_BN_CLICKED(PAUSE, &CMFCTest1Dlg::OnBnClickedPause)
 	ON_BN_CLICKED(IDC_BTN_END, &CMFCTest1Dlg::OnBnClickedBtnEnd)
 	ON_BN_CLICKED(BTNSTART, &CMFCTest1Dlg::OnBnClickedBtnstart)
-	ON_EN_CHANGE(IDC_EDIT1, &CMFCTest1Dlg::OnEnChangeEdit1)
+	ON_UPDATE_COMMAND_UI(ID_CAPTION1, &CMFCTest1Dlg::OnUpdateCaption1)
+	ON_UPDATE_COMMAND_UI(ID_CAPTION2, &CMFCTest1Dlg::OnUpdateCaption2)
 END_MESSAGE_MAP()
 
 
@@ -120,6 +123,7 @@ BOOL CMFCTest1Dlg::OnInitDialog()
 	picture_x = rc.Height();
 	picture_y = rc.Width();
 
+	choose.SetDropDownMenu(IDR_MENU1,0);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -175,14 +179,21 @@ HCURSOR CMFCTest1Dlg::OnQueryDragIcon()
 
 UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 {
-	VideoCapture capture("D:\\test.avi");//视频路径
-	//VideoCapture capture(0);
-	Mat pictureBackground;
-	int frame_order = 0;
-	//VideoCapture capture(0);
 	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)pParam;
-
-	
+	VideoCapture capture;
+	VehicleDetector vehicleDetector;
+	if (this_back->current_func== VERICHL_COUNT)
+	{
+		capture.open("D:\\test.avi");
+	}
+	if (this_back->current_func == PEOPLE_DETECT) {
+		capture.open("D:\\test2.mp4");
+	}
+	if (this_back->current_func == NO_FUNCTION)
+	{
+		return false;
+	}
+	int frame_order = 0;
 	while (1)
 	{
 		MSG my_msg;
@@ -205,9 +216,14 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 			}
 			if (CMFCTest1Dlg::playFlag == 0)
 			{
-				//第一种处理方法
-				
-				CMFCTest1Dlg::FirstDeal(pParam, capture,pictureBackground);
+				if (this_back->current_func == VERICHL_COUNT)
+				{
+					vehicleDetector.process(capture, pParam);
+				}
+				if (this_back->current_func == PEOPLE_DETECT)
+				{
+					//PeopleDetector::process(capture, pParam);
+				}
 				frame_order++;
 			}
 			if (CMFCTest1Dlg::playFlag == 3)
@@ -219,127 +235,6 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 	}
 	capture.release();
 	return 0;
-}
-
-
-
-bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBackground)
-{
-	int frame_order = capture.get(CV_CAP_PROP_POS_FRAMES);
-	Mat frame;
-	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)param;
-	if (frame_order % 1000 == 0)
-	{
-		pictureBackground = MyTools::getPictureBackground(capture, frame_order);
-		medianBlur(pictureBackground, pictureBackground, 3);
-		//
-		Mat mid_three;
-		resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
-		imshow("背景图", mid_three);
-		//imwrite("lala.jpg", pictureBackground);
-
-	}
-	//cvtColor(pictureBackground, mid, COLOR_BGR2GRAY);
-	//Mat element = getStructuringElement(MORPH_RECT, Size(15, 15));
-	//Mat dstImage;
-	//erode(frame, dstImage, element);
-	//blur(mid, mid, Size(7, 7));
-	//Canny(mid, mid, 0, 30, 3);
-
-	if (!capture.read(frame)) return false;
-	Mat mid,frame_mid;
-	frame.copyTo(frame_mid);
-	cvtColor(frame, frame, COLOR_BGR2GRAY);
-	medianBlur(frame, frame, 3);
-
-	Mat mid_one, mid_two;
-	resize(frame, mid_one, Size(this_back->picture_y, this_back->picture_x));
-	//imshow("frame_median.jpg", mid_one);
-	absdiff(frame, pictureBackground, frame);
-	resize(frame, mid_two, Size(this_back->picture_y, this_back->picture_x));
-	imshow("差分图", mid_two);
-
-	//重置大小，满足需求
-	Mat des = Mat::zeros(this_back->picture_x, this_back->picture_y, CV_8UC3);
-	resize(frame, des, des.size());
-
-
-	Mat dst;
-	double thres_value;
-	thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
-	//imwrite("D:\\dst.jpg", dst);
-	//imshow("二值化图", dst);
-
-	Mat element = getStructuringElement(MORPH_RECT, Size(1, 1));
-	Mat element_dilate = getStructuringElement(MORPH_RECT, Size(3, 3));
-	erode(dst, dst, element);
-	//imshow("腐蚀图", dst);
-	dilate(dst, dst, element_dilate);
-	//imshow("膨胀图", dst);
-	
-	
-
-	CString mid_value;
-	mid_value.Format(L"%lf", thres_value);
-	//this_back->show_text.SetWindowTextW(mid_value);
-	//this_back->SetDlgItemText(IDC_EDIT1, mid_value);
-
-
-	//morphologyEx()
-
-	resize(frame_mid, frame_mid, Size(this_back->picture_y, this_back->picture_x));
-
-	vector<vector<Point>> countours,deal_contours;
-	vector<Point> approx;
-	findContours(dst, countours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-	this_back->cur_blobs.clear();
-
-	int judge_line_x = this_back->picture_x / 2;
-	for (size_t i = 0; i < countours.size(); i++)
-	{
-		//approxPolyDP(Mat(countours[i]), approx, arcLength(Mat(countours[i]), true)*0.02, true);
-		approxPolyDP(Mat(countours[i]), approx, 0.5, true);
-
-		if (approx.size() >= 3 && contourArea(Mat(countours[i])) > 50 && contourArea(Mat(countours[i])) < 2000)
-		{
-			deal_contours.push_back(countours[i]);
-			Rect rect = boundingRect(countours[i]);
-			Blob mid;
-			mid.rect = rect;
-			mid.id = this_back->cur_blobs.size() + 1;
-			Moments m;
-			m = moments(approx);
-			mid.xx = m.m10 / m.m00;
-			mid.yy = m.m01 / m.m00;
-			this_back->cur_blobs.push_back(mid);
-			circle(frame_mid, Point(mid.xx, mid.yy), 5, Scalar(0.234, 243));
-			
-			if (mid.xx >= judge_line_x - 2 && mid.xx <= judge_line_x+2) this_back->count++;
-			//this_back->count++;
-
-		}
-	}
-
-	for (size_t i = 0; i < this_back->cur_blobs.capacity(); i++)
-	{
-		//KalmanFilter kf(8,4,0);
-	}
-
-	for (size_t i = 0; i < deal_contours.size(); i++) 
-	{
-		//const Point* p = &deal_contours[i][0];
-		Rect rect = boundingRect(deal_contours[i]);
-		rectangle(frame_mid, rect, Scalar(0, 255, 255), 1, 8);
-	}
-	//drawContours(frame_mid, deal_contours, -1, Scalar(0, 255, 255), 1, 8);
-
-	line(frame_mid, Point(judge_line_x, 0), Point(judge_line_x, this_back->picture_y), Scalar(255, 0, 255), 3);
-
-	CString count_mid;
-	count_mid.Format(L"%d", this_back->count);
-	this_back->show_text.SetWindowTextW(count_mid);
-	imshow("view", frame_mid);
-	return false;
 }
 
 void CMFCTest1Dlg::OnBnClickedPause()
@@ -382,14 +277,16 @@ void CMFCTest1Dlg::OnBnClickedBtnstart()
 
 int CMFCTest1Dlg::playFlag = 2;
 
-void CMFCTest1Dlg::OnEnChangeEdit1()
+//选择车辆检测
+void CMFCTest1Dlg::OnUpdateCaption1(CCmdUI *pCmdUI)
 {
-	// TODO:  如果该控件是 RICHEDIT 控件，它将不
-	// 发送此通知，除非重写 CDialogEx::OnInitDialog()
-	// 函数并调用 CRichEditCtrl().SetEventMask()，
-	// 同时将 ENM_CHANGE 标志“或”运算到掩码中。
-
-	// TODO:  在此添加控件通知处理程序代码
+	choose.SetWindowTextW(L"车流量检测");
+	current_func = VERICHL_COUNT;
 }
 
 
+void CMFCTest1Dlg::OnUpdateCaption2(CCmdUI *pCmdUI)
+{
+	choose.SetWindowTextW(L"行人检测");
+	current_func = PEOPLE_DETECT;
+}

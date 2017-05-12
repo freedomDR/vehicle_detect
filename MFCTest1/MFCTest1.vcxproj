@@ -199,21 +199,25 @@
     <ClInclude Include="MFCTest1.h" />
     <ClInclude Include="MFCTest1Dlg.h" />
     <ClInclude Include="MyTools.h" />
+    <ClInclude Include="PeopleDetector.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="VehicleDetector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Blob.cpp" />
     <ClCompile Include="MFCTest1.cpp" />
     <ClCompile Include="MFCTest1Dlg.cpp" />
     <ClCompile Include="MyTools.cpp" />
+    <ClCompile Include="PeopleDetector.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VehicleDetector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MFCTest1.rc" />

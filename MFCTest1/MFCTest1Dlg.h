@@ -5,6 +5,7 @@
 #pragma once
 #include "afxwin.h"
 #include "Blob.h"
+#include "afxmenubutton.h"
 
 
 // CMFCTest1Dlg 对话框
@@ -41,18 +42,25 @@ public:
 	CWinThread* playThread;
 	CButton stopbtn;
 	static int playFlag;
-	static bool FirstDeal(LPVOID param, VideoCapture & capture,Mat& pictureBackground);
 	afx_msg void OnBnClickedPause();
 	afx_msg void OnBnClickedBtnEnd();
 	afx_msg void OnBnClickedBtnstart();
-private:
+public:
 	int picture_x;
 	int picture_y;
 public:
-	afx_msg void OnEnChangeEdit1();
 	CEdit show_text;
 	vector<Blob> blobs; // 所有团块
 	vector<Blob> pre_blobs; // 前一帧的团块
 	vector<Blob> cur_blobs; // 当前帧的团块
 	int count; // 车辆总数
+	CSplitButton choose;
+	afx_msg void OnUpdateCaption1(CCmdUI *pCmdUI);
+
+	static const int VERICHL_COUNT = 1;//功能1 车辆检测
+	static const int PEOPLE_DETECT = 2;//功能2 行人违规检测
+	static const int NO_FUNCTION = -1;//未选择功能
+
+	int current_func = NO_FUNCTION;//代表当前功能选择
+	afx_msg void OnUpdateCaption2(CCmdUI *pCmdUI);
 };
