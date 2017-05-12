@@ -175,7 +175,7 @@ HCURSOR CMFCTest1Dlg::OnQueryDragIcon()
 
 UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 {
-	VideoCapture capture("D:\\test.avi");
+	VideoCapture capture("D:\\test.avi");//ÊÓÆµÂ·¾¶
 	//VideoCapture capture(0);
 	Mat pictureBackground;
 	int frame_order = 0;
@@ -235,7 +235,7 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 		//
 		Mat mid_three;
 		resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
-		//imshow("±³¾°Í¼", mid_three);
+		imshow("±³¾°Í¼", mid_three);
 		//imwrite("lala.jpg", pictureBackground);
 
 	}
@@ -268,21 +268,21 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	double thres_value;
 	thres_value = threshold(des, dst, 0, 255, CV_THRESH_OTSU);
 	//imwrite("D:\\dst.jpg", dst);
-	imshow("¶þÖµ»¯Í¼", dst);
+	//imshow("¶þÖµ»¯Í¼", dst);
 
 	Mat element = getStructuringElement(MORPH_RECT, Size(1, 1));
 	Mat element_dilate = getStructuringElement(MORPH_RECT, Size(3, 3));
 	erode(dst, dst, element);
-	imshow("¸¯Ê´Í¼", dst);
+	//imshow("¸¯Ê´Í¼", dst);
 	dilate(dst, dst, element_dilate);
-	imshow("ÅòÕÍÍ¼", dst);
+	//imshow("ÅòÕÍÍ¼", dst);
 	
 	
 
 	CString mid_value;
 	mid_value.Format(L"%lf", thres_value);
-	this_back->show_text.SetWindowTextW(mid_value);
-	this_back->SetDlgItemText(IDC_EDIT1, mid_value);
+	//this_back->show_text.SetWindowTextW(mid_value);
+	//this_back->SetDlgItemText(IDC_EDIT1, mid_value);
 
 
 	//morphologyEx()
@@ -292,6 +292,9 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	vector<vector<Point>> countours,deal_contours;
 	vector<Point> approx;
 	findContours(dst, countours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+	this_back->cur_blobs.clear();
+
+	int judge_line_x = this_back->picture_x / 2;
 	for (size_t i = 0; i < countours.size(); i++)
 	{
 		//approxPolyDP(Mat(countours[i]), approx, arcLength(Mat(countours[i]), true)*0.02, true);
@@ -303,15 +306,25 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 			Rect rect = boundingRect(countours[i]);
 			Blob mid;
 			mid.rect = rect;
-			mid.id = this_back->blobs.size() + 1;
+			mid.id = this_back->cur_blobs.size() + 1;
 			Moments m;
 			m = moments(approx);
 			mid.xx = m.m10 / m.m00;
 			mid.yy = m.m01 / m.m00;
-			this_back->blobs.push_back(mid);
+			this_back->cur_blobs.push_back(mid);
 			circle(frame_mid, Point(mid.xx, mid.yy), 5, Scalar(0.234, 243));
+			
+			if (mid.xx >= judge_line_x - 2 && mid.xx <= judge_line_x+2) this_back->count++;
+			//this_back->count++;
+
 		}
 	}
+
+	for (size_t i = 0; i < this_back->cur_blobs.capacity(); i++)
+	{
+		//KalmanFilter kf(8,4,0);
+	}
+
 	for (size_t i = 0; i < deal_contours.size(); i++) 
 	{
 		//const Point* p = &deal_contours[i][0];
@@ -320,7 +333,11 @@ bool CMFCTest1Dlg::FirstDeal(LPVOID param, VideoCapture& capture,Mat& pictureBac
 	}
 	//drawContours(frame_mid, deal_contours, -1, Scalar(0, 255, 255), 1, 8);
 
+	line(frame_mid, Point(judge_line_x, 0), Point(judge_line_x, this_back->picture_y), Scalar(255, 0, 255), 3);
 
+	CString count_mid;
+	count_mid.Format(L"%d", this_back->count);
+	this_back->show_text.SetWindowTextW(count_mid);
 	imshow("view", frame_mid);
 	return false;
 }

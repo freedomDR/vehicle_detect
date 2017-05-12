@@ -51,5 +51,8 @@ private:
 public:
 	afx_msg void OnEnChangeEdit1();
 	CEdit show_text;
-	vector<Blob> blobs;
+	vector<Blob> blobs; // 所有团块
+	vector<Blob> pre_blobs; // 前一帧的团块
+	vector<Blob> cur_blobs; // 当前帧的团块
+	int count; // 车辆总数
 };
