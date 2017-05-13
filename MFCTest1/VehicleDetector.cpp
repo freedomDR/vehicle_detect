@@ -5,6 +5,7 @@
 #include "resource.h"
 
 
+
 VehicleDetector::VehicleDetector()
 {
 	for (int i = 0; i < 11; i++)
@@ -117,9 +118,10 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 			mid.yy = m.m01 / m.m00;
 			this_back->blobs.push_back(mid);
 			circle(frame_mid, Point(mid.xx, mid.yy), 5, Scalar(0.234, 243));
-			
-			if (mid.yy<=240&& mid.yy>=140 && mid.xx > 97&& mid.xx<104) this_back->count++;
-			if (mid.yy <= 370 && mid.yy >= 246 && mid.xx >=420 && mid.xx<=438) this_back->count2++;
+			int begin =(lines[1] + lines[3]) / 2 ;
+			int end = (lines[6] + lines[8]) / 2 ;
+			if (mid.yy<=lines[4]&& mid.yy>=lines[2] && mid.xx >=(begin-3)&& mid.xx<=begin+3) this_back->count++;
+			if (mid.yy <= lines[9] && mid.yy >= lines[7] && mid.xx >=end-5 && mid.xx<=end+5) this_back->count2++;
 			
 		}
 	}
