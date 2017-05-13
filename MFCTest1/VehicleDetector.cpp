@@ -30,7 +30,7 @@ void VehicleDetector::onMouseAction(int event, int x, int y, int flags, void * u
 	{
 		this_flag->finaBegin = x;
 		this_flag->finaEnd = y;
-		line(this_flag->frame_mid, Point(this_flag->initBegin, this_flag->initEnd), Point(this_flag->finaBegin, this_flag->finaEnd), Scalar(0, 0, 255), 2);
+		//line(this_flag->frame_mid, Point(this_flag->initBegin, this_flag->initEnd), Point(this_flag->finaBegin, this_flag->finaEnd), Scalar(0, 0, 255), 2);
 
 	}
 }
@@ -50,7 +50,7 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	if (!capture.read(frame)) return;
 	Mat mid;
 	frame.copyTo(frame_mid);
-	setMouseCallback("vehicle", onMouseAction, this);
+	
 	cvtColor(frame, frame, COLOR_BGR2GRAY);
 	medianBlur(frame, frame, 3);
 
@@ -115,7 +115,7 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	}
 	
 	//line(frame_mid, Point(100, 140), Point(100, 240), Scalar(0, 0, 255), 2);
-	//line(frame_mid, Point(430, 246), Point(430, 370), Scalar(12, 200, 2), 2);
+	line(frame_mid, Point(initBegin, initEnd), Point(finaBegin, finaEnd), Scalar(12, 200, 2), 2);
 	CString mid_value;
 	CString mid_value2;
 	mid_value.Format(L"%d", this_back->count);

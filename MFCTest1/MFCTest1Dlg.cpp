@@ -113,15 +113,17 @@ BOOL CMFCTest1Dlg::OnInitDialog()
 	// TODO: 在此添加额外的初始化代码
 
 	namedWindow("vehicle", WINDOW_AUTOSIZE);
-	namedWindow("people",WINDOW_AUTOSIZE);
+	//namedWindow("people",WINDOW_AUTOSIZE);
 	HWND hWnd = (HWND)cvGetWindowHandle("vehicle");
-	HWND hwndd = (HWND)cvGetWindowHandle("people");
+	//HWND hwndd = (HWND)cvGetWindowHandle("people");
 	HWND hParent = ::GetParent(hWnd);
-	HWND hParentt = ::GetParent(hwndd);
+	//HWND hParentt = ::GetParent(hwndd);
 	::SetParent(hWnd, GetDlgItem(IDC_SHARE)->m_hWnd);
-	::SetParent(hwndd,GetDlgItem(IDC_SHARE)->m_hWnd);
+	//::SetParent(hwndd,GetDlgItem(IDC_SHARE)->m_hWnd);
 	::ShowWindow(hParent, SW_HIDE);
-	::ShowWindow(hParentt, SW_HIDE);
+	//::ShowWindow(hParentt, SW_HIDE);
+	setMouseCallback("vehicle", VehicleDetector::onMouseAction,(void*)&vehicleDetector);
+	//setMouseCallback("vehicle", VehicleDetector::onMouseAction);
 
 	CRect rc;
 	CWnd *pWnd = GetDlgItem(IDC_SHARE);//IDC_PIC_2D为控件ID
@@ -187,8 +189,7 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 {
 	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)pParam;
 	VideoCapture capture;
-	VehicleDetector vehicleDetector;
-	PeopleDetector peopleDetector;
+	
 	if (this_back->current_func== VERICHL_COUNT)
 	{
 		capture.open("D:\\MFC\\新建文件夹\\example\\example.avi");
@@ -202,6 +203,7 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 		return false;
 	}
 	int frame_order = 0;
+	
 	while (1)
 	{
 		MSG my_msg;
@@ -226,11 +228,11 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 			{
 				if (this_back->current_func == VERICHL_COUNT)
 				{
-					vehicleDetector.process(capture, pParam);
+					this_back->vehicleDetector.process(capture, pParam);
 				}
 				if (this_back->current_func == PEOPLE_DETECT)
 				{
-					peopleDetector.process2(capture, pParam);
+					this_back->peopleDetector.process2(capture, pParam);
 					
 				}
 				frame_order++;
