@@ -7,6 +7,10 @@
 
 VehicleDetector::VehicleDetector()
 {
+	for (int i = 0; i < 11; i++)
+	{
+		lines[i] = 0;
+	}
 }
 
 
@@ -17,6 +21,10 @@ VehicleDetector::~VehicleDetector()
 void VehicleDetector::onMouseAction(int event, int x, int y, int flags, void * ustc)
 {
 	VehicleDetector *this_flag = (VehicleDetector *)ustc;
+	int base_i;
+	if (this_flag->lines[5] == false) base_i = 1;
+	else if (this_flag->lines[10] == false) base_i = 6;
+	else return;
 	if (event == CV_EVENT_MOUSEMOVE) 
 	{
 		cout << "触发鼠标移动事件" << endl;
@@ -25,17 +33,25 @@ void VehicleDetector::onMouseAction(int event, int x, int y, int flags, void * u
 	{
 		this_flag->initBegin= x;
 		this_flag->initEnd = y;
+		this_flag->flag = false;
+		this_flag->lines[base_i + 0] = x;
+		this_flag->lines[base_i + 1] = y;
+		this_flag->lines[base_i + 4] = 0;
 	}
 	if(event==CV_EVENT_LBUTTONUP)
 	{
 		this_flag->finaBegin = x;
 		this_flag->finaEnd = y;
 		//line(this_flag->frame_mid, Point(this_flag->initBegin, this_flag->initEnd), Point(this_flag->finaBegin, this_flag->finaEnd), Scalar(0, 0, 255), 2);
-
+		this_flag->flag = true;
+		this_flag->lines[base_i + 2] = x;
+		this_flag->lines[base_i + 3] = y;
+		this_flag->lines[base_i + 4] = 1;
 	}
 }
 void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 {
+	//int flag = false;
 	int frame_order = capture.get(CV_CAP_PROP_POS_FRAMES);
 	Mat frame;
 	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)params;
@@ -115,7 +131,14 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	}
 	
 	//line(frame_mid, Point(100, 140), Point(100, 240), Scalar(0, 0, 255), 2);
-	line(frame_mid, Point(initBegin, initEnd), Point(finaBegin, finaEnd), Scalar(12, 200, 2), 2);
+	if (lines[5] == 1) 
+	{
+		line(frame_mid, Point(lines[1], lines[2]), Point(lines[3], lines[4]), Scalar(12, 200, 2), 2);
+	}
+	if (lines[10] == 1)
+	{
+		line(frame_mid, Point(lines[6], lines[7]), Point(lines[8], lines[9]), Scalar(12, 200, 2), 2);
+	}
 	CString mid_value;
 	CString mid_value2;
 	mid_value.Format(L"%d", this_back->count);

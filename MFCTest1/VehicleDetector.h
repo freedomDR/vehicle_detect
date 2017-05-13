@@ -10,5 +10,7 @@ public:
 	 int initBegin, initEnd;
 	 int finaBegin, finaEnd;
     Mat  frame_mid;
+	bool flag;
+	int lines[11];
 };
 

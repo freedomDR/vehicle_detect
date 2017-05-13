@@ -96,11 +96,12 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 				r.y += cvRound(r.height*0.07);
 				r.height = cvRound(r.height*0.8);
 				rectangle(img, r.tl(), r.br(), cv::Scalar(0, 255, 0), 2);  //img-Í¼Æ¬£¬tl----the top-left corner£¬br----the top-left corner£¬Scalar()-¾ØÐÎ¿òÑÕÉ«£¬config6-Ïß¿í
+				
 			}
 			resize(img, img, Size(this_back->picture_y, this_back->picture_x));
 			line(img,Point(150,180),Point(150,200),Scalar(99,100,33),2);
 			line(img, Point(280, 180), Point(280, 200), Scalar(99, 100, 33),2);
-			imshow("people", img);
+			imshow("vehicle", img);
 			int c = waitKey(1);  
 		} 
 		
