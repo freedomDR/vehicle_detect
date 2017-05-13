@@ -6,6 +6,8 @@
 #include "afxwin.h"
 #include "Blob.h"
 #include "afxmenubutton.h"
+#include "VehicleDetector.h"
+#include "PeopleDetector.h"
 
 
 // CMFCTest1Dlg 对话框
@@ -50,10 +52,12 @@ public:
 	int picture_y;
 public:
 	CEdit show_text;
+	CEdit show_text2;
 	vector<Blob> blobs; // 所有团块
 	vector<Blob> pre_blobs; // 前一帧的团块
 	vector<Blob> cur_blobs; // 当前帧的团块
-	int count; // 车辆总数
+	int count=0; // 车辆总数
+	int count2=0;
 	CSplitButton choose;
 	afx_msg void OnUpdateCaption1(CCmdUI *pCmdUI);
 
@@ -63,4 +67,7 @@ public:
 
 	int current_func = NO_FUNCTION;//代表当前功能选择
 	afx_msg void OnUpdateCaption2(CCmdUI *pCmdUI);
+	VehicleDetector vehicleDetector;
+
+	PeopleDetector peopleDetector;
 };

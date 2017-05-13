@@ -64,6 +64,7 @@ void CMFCTest1Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, PAUSE, stopbtn);
 	DDX_Control(pDX, IDC_EDIT1, show_text);
 	DDX_Control(pDX, IDC_SPLIT1, choose);
+	DDX_Control(pDX, IDC_EDIT2,show_text2);
 }
 
 BEGIN_MESSAGE_MAP(CMFCTest1Dlg, CDialogEx)
@@ -111,11 +112,18 @@ BOOL CMFCTest1Dlg::OnInitDialog()
 
 	// TODO: 在此添加额外的初始化代码
 
-	namedWindow("view", WINDOW_AUTOSIZE);
-	HWND hWnd = (HWND)cvGetWindowHandle("view");
+	namedWindow("vehicle", WINDOW_AUTOSIZE);
+	//namedWindow("people",WINDOW_AUTOSIZE);
+	HWND hWnd = (HWND)cvGetWindowHandle("vehicle");
+	//HWND hwndd = (HWND)cvGetWindowHandle("people");
 	HWND hParent = ::GetParent(hWnd);
+	//HWND hParentt = ::GetParent(hwndd);
 	::SetParent(hWnd, GetDlgItem(IDC_SHARE)->m_hWnd);
+	//::SetParent(hwndd,GetDlgItem(IDC_SHARE)->m_hWnd);
 	::ShowWindow(hParent, SW_HIDE);
+	//::ShowWindow(hParentt, SW_HIDE);
+	setMouseCallback("vehicle", VehicleDetector::onMouseAction,(void*)&vehicleDetector);
+	//setMouseCallback("vehicle", VehicleDetector::onMouseAction);
 
 	CRect rc;
 	CWnd *pWnd = GetDlgItem(IDC_SHARE);//IDC_PIC_2D为控件ID
@@ -181,19 +189,21 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 {
 	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)pParam;
 	VideoCapture capture;
-	VehicleDetector vehicleDetector;
+	
 	if (this_back->current_func== VERICHL_COUNT)
 	{
-		capture.open("D:\\test.avi");
+		capture.open("D:\\MFC\\新建文件夹\\example\\example.avi");
 	}
-	if (this_back->current_func == PEOPLE_DETECT) {
-		capture.open("D:\\test2.mp4");
+	if (this_back->current_func == PEOPLE_DETECT) 
+	{
+		capture.open("D:\\MFC\\新建文件夹\\example\\test2.mp4");
 	}
 	if (this_back->current_func == NO_FUNCTION)
 	{
 		return false;
 	}
 	int frame_order = 0;
+	
 	while (1)
 	{
 		MSG my_msg;
@@ -218,11 +228,12 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 			{
 				if (this_back->current_func == VERICHL_COUNT)
 				{
-					vehicleDetector.process(capture, pParam);
+					this_back->vehicleDetector.process(capture, pParam);
 				}
 				if (this_back->current_func == PEOPLE_DETECT)
 				{
-					//PeopleDetector::process(capture, pParam);
+					this_back->peopleDetector.process2(capture, pParam);
+					
 				}
 				frame_order++;
 			}
@@ -259,6 +270,8 @@ void CMFCTest1Dlg::OnBnClickedPause()
 void CMFCTest1Dlg::OnBnClickedBtnEnd()
 {
 	CMFCTest1Dlg::playFlag = 3;
+	count = 0;
+	count2 = 0;
 	::PostThreadMessage(playThread->m_nThreadID, WM_QUIT, 0, 0);
 }
 
