@@ -19,7 +19,6 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	int frame_order = capture.get(CV_CAP_PROP_POS_FRAMES);
 	Mat frame;
 	CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)params;
-	//Mat pictureBackground;
 	if (frame_order % 1000 == 0)
 	{
 		pictureBackground = MyTools::getPictureBackground(capture, frame_order);
@@ -40,7 +39,6 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	absdiff(frame, pictureBackground, frame);
 	resize(frame, mid_two, Size(this_back->picture_y, this_back->picture_x));
 	//imshow("²î·ÖÍ¼", mid_two);
-
 	//ÖØÖÃ´óÐ¡£¬Âú×ãÐèÇó
 	Mat des = Mat::zeros(this_back->picture_x, this_back->picture_y, CV_8UC3);
 	resize(frame, des, des.size());
@@ -58,14 +56,8 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	//imshow("¸¯Ê´Í¼", dst);
 	dilate(dst, dst, element_dilate);
 	//imshow("ÅòÕÍÍ¼", dst);
+    resize(frame_mid, frame_mid, Size(this_back->picture_y, this_back->picture_x));
 
-
-	
-
-
-	//morphologyEx()
-
-	resize(frame_mid, frame_mid, Size(this_back->picture_y, this_back->picture_x));
 
 	vector<vector<Point>> countours, deal_contours;
 	vector<Point> approx;
@@ -79,7 +71,7 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 		{
 			deal_contours.push_back(countours[i]);
 			Rect rect = boundingRect(countours[i]);
-			Blob mid;
+			Blob mid;//ÍÅ¿é
 			mid.rect = rect;
 			mid.id = this_back->blobs.size() + 1;
 			Moments m;
@@ -88,8 +80,8 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 			mid.yy = m.m01 / m.m00;
 			this_back->blobs.push_back(mid);
 			circle(frame_mid, Point(mid.xx, mid.yy), 5, Scalar(0.234, 243));
-			if (mid.yy<=230&& mid.yy>=120 && mid.xx > 96&& mid.xx<105) this_back->count++;
-			if (mid.yy <= 380 && mid.yy >= 220 && mid.xx > 380 && mid.xx<410) this_back->count2++;
+			if (mid.yy<=240&& mid.yy>=140 && mid.xx > 97&& mid.xx<104) this_back->count++;
+			if (mid.yy <= 370 && mid.yy >= 246 && mid.xx >=420 && mid.xx<=438) this_back->count2++;
 			
 		}
 	}
@@ -100,14 +92,13 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 		rectangle(frame_mid, rect, Scalar(0, 255, 255), 1, 8);
 	}
 	
-	line(frame_mid, Point(100, 140), Point(100, 230), Scalar(0, 0, 255), 2);
-	line(frame_mid, Point(400, 230), Point(400, 380), Scalar(255, 0, 0), 2);
+	line(frame_mid, Point(100, 140), Point(100, 240), Scalar(0, 0, 255), 2);
+	line(frame_mid, Point(430, 246), Point(430, 370), Scalar(12, 200, 2), 2);
 	CString mid_value;
 	CString mid_value2;
-	
 	mid_value.Format(L"%d", this_back->count);
 	mid_value2.Format(L"%d", this_back->count2);
 	this_back->show_text.SetWindowTextW(mid_value);
 	this_back->show_text2.SetWindowTextW(mid_value2);
-	imshow("view", frame_mid);
+	imshow("vehicle", frame_mid);
 }

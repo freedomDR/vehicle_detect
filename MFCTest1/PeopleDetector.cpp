@@ -2,6 +2,7 @@
 #include "PeopleDetector.h"
 #include <string.h>
 #include <ctype.h>
+#include "MFCTest1Dlg.h"
 
 
 
@@ -17,23 +18,17 @@ PeopleDetector::~PeopleDetector()
 void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
  
 {
+	    CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)params;
         Mat img;  //存储图像数据
-		FILE* f = 0;
-		char _filename[1024]; //图像文件名
+		//FILE* f = 0;
 
-							  //判断是否有图像参数输入
-		
-		//读取输入的图像中的数据
 
-							   //判定是图片格式文件还是文件列表
 		if (!caputure.read(img)) return;
-		
-		
 		HOGDescriptor hog;  //HOG特征描述子
 		hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());  //得到SVM检测算子----用于对hog特征进行分类的svm模型的系数赋值
-		//namedWindow("people detector", 1);
 
-		for (;;)
+/*char _filename[1024]; //图像文件名
+	   for (;;)
 		{
 			char* filename = _filename;
 			if (f)
@@ -55,30 +50,25 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 				continue;
 
 			fflush(stdout);  //清楚缓冲区
+			*/
+
+
+
 			vector<Rect> found, found_filtered;
 			double t = (double)getTickCount();  //从操作系统启动到现在所经过的毫秒数
-
-												// run the detector with default parameters. to get a higher hit-rate
-												// (and more false alarms, respectively), decrease the hitThreshold and
-												// groupThreshold (set groupThreshold to 0 to turn off the grouping completely).
 			int can = img.channels();  //获取通道数
 
+		   /*函数：HOGDescriptor::detectMultiScale(const GpuMat& img, vector<Rect>& found_locations, double hit_threshold=0,
+		    Size win_stride=Size(), Size padding=Size(), double scale0=1.05, int group_threshold=2)
+            功能：对输入的图片img进行多尺度的行人检测.
+			参数说明：
+			img：待输入检测的图片
+			found_locations：检测到的目标区域列表
+			hit_threshold：程序内部为计算行人目标的阈值，也就是检测到的特征到SVM分类超平面的距离
+            win_stride：滑动窗口每次移动的距离（必须是块移动的整数倍） padding：图像扩充的大小
+			scale0：比例系数，即滑动窗口每次增加的比例
+			group_threshold：校正系数，当一个目标被多个窗口检测出来时，起调节作用.设置为0是不调节*/
 
-									   /*
-									   函数：HOGDescriptor::detectMultiScale(const GpuMat& img, vector<Rect>& found_locations, double hit_threshold=0,
-									   Size win_stride=Size(), Size padding=Size(), double scale0=1.05, int group_threshold=2)
-									   功能：对输入的图片img进行多尺度的行人检测.
-									   参数说明：
-									   img：待输入检测的图片
-									   found_locations：检测到的目标区域列表
-									   hit_threshold：程序内部为计算行人目标的阈值，也就是检测到的特征到SVM分类超平面的距离
-									   win_stride：滑动窗口每次移动的距离（必须是块移动的整数倍）
-									   padding：图像扩充的大小
-									   scale0：比例系数，即滑动窗口每次增加的比例
-									   group_threshold：校正系数，当一个目标被多个窗口检测出来时，起调节作用.设置为0是不调节
-
-
-									   */
 			hog.detectMultiScale(img, found, 0, Size(8, 8), Size(32, 32), 1.05, 2);
 
 			t = (double)getTickCount() - t;  //检测所耗费的时间
@@ -100,23 +90,21 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 			for (i = 0; i < found_filtered.size(); i++)
 			{
 				Rect r = found_filtered[i];
-				// the HOG detector returns slightly larger rectangles than the real objects.
-				// so we slightly shrink the rectangles to get a nicer output.因为HOG detector返回的事比目标大的矩形框，因此应缩小矩形框
+				// 因为HOG detector返回的事比目标大的矩形框，因此应缩小矩形框
 				r.x += cvRound(r.width*0.1);
 				r.width = cvRound(r.width*0.8);
 				r.y += cvRound(r.height*0.07);
 				r.height = cvRound(r.height*0.8);
 				rectangle(img, r.tl(), r.br(), cv::Scalar(0, 255, 0), 2);  //img-图片，tl----the top-left corner，br----the top-left corner，Scalar()-矩形框颜色，config6-线宽
 			}
-			imshow("people detector", img);
-			//int c = waitKey(0) & 255;
-			int c = waitKey(1);  //窗口延时
-								 //if( c == 'q' || c == 'Q' || !f)
-								 //  break;
-		} //===end of for(;;)
-
+			resize(img, img, Size(this_back->picture_y, this_back->picture_x));
+			line(img,Point(150,180),Point(150,200),Scalar(99,100,33),2);
+			line(img, Point(280, 180), Point(280, 200), Scalar(99, 100, 33),2);
+			imshow("people", img);
+			int c = waitKey(1);  
+		} 
 		
-}
+
 
 
 
