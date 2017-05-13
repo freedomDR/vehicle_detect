@@ -14,6 +14,26 @@ VehicleDetector::~VehicleDetector()
 {
 }
 
+void VehicleDetector::onMouseAction(int event, int x, int y, int flags, void * ustc)
+{
+	VehicleDetector *this_flag = (VehicleDetector *)ustc;
+	if (event == CV_EVENT_MOUSEMOVE) 
+	{
+		cout << "触发鼠标移动事件" << endl;
+	}
+	if (event == CV_EVENT_LBUTTONDOWN)
+	{
+		this_flag->initBegin= x;
+		this_flag->initEnd = y;
+	}
+	if(event==CV_EVENT_LBUTTONUP)
+	{
+		this_flag->finaBegin = x;
+		this_flag->finaEnd = y;
+		line(this_flag->frame_mid, Point(this_flag->initBegin, this_flag->initEnd), Point(this_flag->finaBegin, this_flag->finaEnd), Scalar(0, 0, 255), 2);
+
+	}
+}
 void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 {
 	int frame_order = capture.get(CV_CAP_PROP_POS_FRAMES);
@@ -28,8 +48,9 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	}
 
 	if (!capture.read(frame)) return;
-	Mat mid, frame_mid;
+	Mat mid;
 	frame.copyTo(frame_mid);
+	setMouseCallback("vehicle", onMouseAction, this);
 	cvtColor(frame, frame, COLOR_BGR2GRAY);
 	medianBlur(frame, frame, 3);
 
@@ -80,6 +101,7 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 			mid.yy = m.m01 / m.m00;
 			this_back->blobs.push_back(mid);
 			circle(frame_mid, Point(mid.xx, mid.yy), 5, Scalar(0.234, 243));
+			
 			if (mid.yy<=240&& mid.yy>=140 && mid.xx > 97&& mid.xx<104) this_back->count++;
 			if (mid.yy <= 370 && mid.yy >= 246 && mid.xx >=420 && mid.xx<=438) this_back->count2++;
 			
@@ -92,8 +114,8 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 		rectangle(frame_mid, rect, Scalar(0, 255, 255), 1, 8);
 	}
 	
-	line(frame_mid, Point(100, 140), Point(100, 240), Scalar(0, 0, 255), 2);
-	line(frame_mid, Point(430, 246), Point(430, 370), Scalar(12, 200, 2), 2);
+	//line(frame_mid, Point(100, 140), Point(100, 240), Scalar(0, 0, 255), 2);
+	//line(frame_mid, Point(430, 246), Point(430, 370), Scalar(12, 200, 2), 2);
 	CString mid_value;
 	CString mid_value2;
 	mid_value.Format(L"%d", this_back->count);
@@ -102,3 +124,5 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	this_back->show_text2.SetWindowTextW(mid_value2);
 	imshow("vehicle", frame_mid);
 }
+
+
