@@ -241,7 +241,7 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 			{
 				break;
 			}
-			waitKey(30);
+			waitKey(60);
 		}
 	}
 	capture.release();
