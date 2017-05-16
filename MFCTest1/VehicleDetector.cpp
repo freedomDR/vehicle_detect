@@ -61,7 +61,6 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 		pictureBackground = MyTools::getPictureBackground(capture, frame_order);
 		medianBlur(pictureBackground, pictureBackground, 3);
 		Mat mid_three;
-		//resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
 	}
 
 	if (!capture.read(frame)) return;
@@ -69,7 +68,8 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	frame.copyTo(frame_mid);
 	
 	cvtColor(frame, frame, COLOR_BGR2GRAY);
-	medianBlur(frame, frame, 3);
+	
+	(frame, frame, 3);
 
 	Mat mid_one, mid_two;
 	resize(frame, mid_one, Size(this_back->picture_y, this_back->picture_x));
@@ -79,7 +79,7 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	//imshow("差分图", mid_two);
 	//重置大小，满足需求
 	Mat des = Mat::zeros(this_back->picture_x, this_back->picture_y, CV_8UC3);
-	resize(frame, des, des.size());
+	resize(frame, des, des.size());   
 
 
 	Mat dst;
@@ -137,7 +137,7 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 	{
 		line(frame_mid, Point(lines[1], lines[2]), Point(lines[3], lines[4]), Scalar(12, 200, 2), 2);
 	}
-	if (lines[10] == 1)
+	//if (lines[10] == 1)
 	{
 		line(frame_mid, Point(lines[6], lines[7]), Point(lines[8], lines[9]), Scalar(12, 200, 2), 2);
 	}
