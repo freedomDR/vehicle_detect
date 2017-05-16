@@ -26,13 +26,13 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 		if (!caputure.read(img)) return;
 		Mat img_copy;
 		img.copyTo(img_copy);
-		img_copy = img_copy(Rect(100, 150, 130, 180));
+		//img_copy = img_copy(Rect(100, 150, 130, 180));
 		HOGDescriptor hog;  //HOG特征描述子
 		hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());  //得到SVM检测算子----用于对hog特征进行分类的svm模型的系数赋值
 
 		vector<Rect> found, found_filtered;
 		cvtColor(img_copy, img_copy, CV_BGR2GRAY);
-		imshow("img_copy", img_copy);
+		//imshow("img_copy", img_copy);
 		//int can = img.channels();  //获取通道数
 
 		/*Size win_stride=Size(), Size padding=Size(), double scale0=1.05, int group_threshold=2)
