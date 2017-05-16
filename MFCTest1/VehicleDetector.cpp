@@ -61,7 +61,7 @@ void VehicleDetector::process(VideoCapture &capture, LPVOID params)
 		pictureBackground = MyTools::getPictureBackground(capture, frame_order);
 		medianBlur(pictureBackground, pictureBackground, 3);
 		Mat mid_three;
-		resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
+		//resize(pictureBackground, mid_three, Size(this_back->picture_y, this_back->picture_x));
 	}
 
 	if (!capture.read(frame)) return;

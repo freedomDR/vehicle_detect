@@ -123,8 +123,8 @@ BOOL CMFCTest1Dlg::OnInitDialog()
 	::ShowWindow(hParent, SW_HIDE);
 	//::ShowWindow(hParentt, SW_HIDE);
 	setMouseCallback("vehicle", VehicleDetector::onMouseAction,(void*)&vehicleDetector);
-//	setMouseCallback("vehicle",PeopleDetector::onMouseAction,(void*)&peopleDetector);
-	
+	//setMouseCallback("vehicle", VehicleDetector::onMouseAction);
+
 	CRect rc;
 	CWnd *pWnd = GetDlgItem(IDC_SHARE);//IDC_PIC_2D为控件ID
 	pWnd->GetClientRect(&rc);//rc为控件的大小。
@@ -192,11 +192,11 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 	
 	if (this_back->current_func== VERICHL_COUNT)
 	{
-		capture.open("D:\\MFC\\新建文件夹\\example\\example.avi");
+		capture.open("D:\\test.avi");
 	}
 	if (this_back->current_func == PEOPLE_DETECT) 
 	{
-		capture.open("C:\\Users\\Administrator\\Documents\\Tencent Files\\2351257955\\FileRecv\\MobileFile\\行人检测.mp4");
+		capture.open("D:\\格式工厂新行人检测视频1.mp4");
 	}
 	if (this_back->current_func == NO_FUNCTION)
 	{
@@ -241,7 +241,7 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 			{
 				break;
 			}
-			waitKey(60);
+			waitKey(30);
 		}
 	}
 	capture.release();
