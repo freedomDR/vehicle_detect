@@ -26,7 +26,6 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 		if (!caputure.read(img)) return;
 		Mat img_copy;
 		img.copyTo(img_copy);
-		//img_copy = img_copy(Rect(100, 150, 130, 180));
 		HOGDescriptor hog;  //HOG特征描述子
 		hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());  //得到SVM检测算子----用于对hog特征进行分类的svm模型的系数赋值
 
@@ -73,12 +72,35 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 				
 		}
 		resize(img, img, Size(this_back->picture_y, this_back->picture_x));
-		//line(img,Point(150,180),Point(150,200),Scalar(99,100,33),2);
+	    if(this_back->peopleDetector.flag==true)
+		line(img,Point(this_back->peopleDetector.initBegin, this_back->peopleDetector.initEnd),Point(this_back->peopleDetector.finaBegin, this_back->peopleDetector.finaEnd),Scalar(0,0,255),2);
 		//line(img, Point(280, 180), Point(280, 200), Scalar(99, 100, 33),2);
 		imshow("vehicle", img);
 			  
-} 
-		
+}
+
+void PeopleDetector::onMouseAction(int event, int x, int y, int flags, void * ustc)
+{
+	    PeopleDetector *this_flag = (PeopleDetector *)ustc;
+		int base_i;
+		if (event == CV_EVENT_MOUSEMOVE)
+		{
+			cout << "触发鼠标移动事件" << endl;
+		}
+		if (event == CV_EVENT_LBUTTONDOWN)
+		{
+			this_flag->initBegin = x;
+			this_flag->initEnd = y;
+			this_flag->flag = false;
+		}
+		if (event == CV_EVENT_LBUTTONUP)
+		{
+			this_flag->finaBegin = x;
+			this_flag->finaEnd = y;
+			this_flag->flag = true;
+			
+		}
+	}		
 
 
 

@@ -113,17 +113,12 @@ BOOL CMFCTest1Dlg::OnInitDialog()
 	// TODO: 在此添加额外的初始化代码
 
 	namedWindow("vehicle", WINDOW_AUTOSIZE);
-	//namedWindow("people",WINDOW_AUTOSIZE);
 	HWND hWnd = (HWND)cvGetWindowHandle("vehicle");
-	//HWND hwndd = (HWND)cvGetWindowHandle("people");
 	HWND hParent = ::GetParent(hWnd);
-	//HWND hParentt = ::GetParent(hwndd);
 	::SetParent(hWnd, GetDlgItem(IDC_SHARE)->m_hWnd);
-	//::SetParent(hwndd,GetDlgItem(IDC_SHARE)->m_hWnd);
 	::ShowWindow(hParent, SW_HIDE);
-	//::ShowWindow(hParentt, SW_HIDE);
 	setMouseCallback("vehicle", VehicleDetector::onMouseAction,(void*)&vehicleDetector);
-	//setMouseCallback("vehicle", VehicleDetector::onMouseAction);
+	//setMouseCallback("vehicle", VehicleDetector::onMouseAction, (void*)&vehicleDetector);
 
 	CRect rc;
 	CWnd *pWnd = GetDlgItem(IDC_SHARE);//IDC_PIC_2D为控件ID
@@ -192,10 +187,12 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 	
 	if (this_back->current_func== VERICHL_COUNT)
 	{
+		setMouseCallback("vehicle", VehicleDetector::onMouseAction, (void*)&this_back->vehicleDetector);
 		capture.open("D:\\test.avi");
 	}
 	if (this_back->current_func == PEOPLE_DETECT) 
 	{
+		setMouseCallback("vehicle", PeopleDetector::onMouseAction, (void*)&this_back->peopleDetector);
 		capture.open("D:\\格式工厂新行人检测视频1.mp4");
 	}
 	if (this_back->current_func == NO_FUNCTION)
