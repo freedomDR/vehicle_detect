@@ -199,7 +199,7 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 	{
 		return false;
 	}
-	int frame_order = 0;
+	
 	
 	while (1)
 	{
@@ -219,7 +219,7 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 			{
 				capture.set(CV_CAP_PROP_POS_FRAMES, 0);
 				CMFCTest1Dlg::playFlag = 0;
-				frame_order = 0;
+				this_back->frame_order = 0;
 			}
 			if (CMFCTest1Dlg::playFlag == 0)
 			{
@@ -232,7 +232,7 @@ UINT CMFCTest1Dlg::PlayVideo(LPVOID pParam)
 					this_back->peopleDetector.process2(capture, pParam);
 					
 				}
-				frame_order++;
+				this_back->frame_order++;
 			}
 			if (CMFCTest1Dlg::playFlag == 3)
 			{

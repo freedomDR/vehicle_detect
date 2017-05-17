@@ -11,5 +11,16 @@ public:
      bool flag;
 	 int lines[11];
 	 HOGDescriptor hog;  //HOGÌØÕ÷ÃèÊö×Ó
+	 static UINT DealPeople(LPVOID pParam);
+	 static UINT NotifyPeople(LPVOID pParam);
+	 vector<Rect> found_filtered;
+	 Mat img;
+	 BOOL found_filtered_flag;
+	 
 };
+typedef struct P
+{
+	Mat image;
+	vector<Rect>& found, found_filtered;
+}*Params;
 

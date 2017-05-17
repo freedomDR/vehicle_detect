@@ -61,6 +61,8 @@ public:
 	CSplitButton choose;
 	afx_msg void OnUpdateCaption1(CCmdUI *pCmdUI);
 
+	int frame_order;
+
 	static const int VERICHL_COUNT = 1;//功能1 车辆检测
 	static const int PEOPLE_DETECT = 2;//功能2 行人违规检测
 	static const int NO_FUNCTION = -1;//未选择功能
