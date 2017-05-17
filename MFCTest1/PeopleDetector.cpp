@@ -68,13 +68,13 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 				r.y += cvRound(r.height*0.07);
 				r.height = cvRound(r.height*0.8);
 				rectangle(img, r.tl(), r.br(), cv::Scalar(0, 255, 0), 2);  //img-Í¼Æ¬£¬tl----the top-left corner£¬br----the top-left corner£¬Scalar()-¾ØÐÎ¿òÑÕÉ«£¬config6-Ïß¿í
-				if (r.y+r.height >= initBegin && flag_mid == true && this_back->frame_order%10 == 0)
+				if (r.y+r.height >= initBegin && flag_mid == true && this_back->frame_order%30 == 0)
 				{
-					flag_mid = false;
-					AfxBeginThread(NotifyPeople, this, 0, 0, 0, 0);
+					//flag_mid = false;
+					//AfxBeginThread(NotifyPeople, this, 0, 0, 0, 0);
 					//MessageBeep(MB_OK);
 					//Beep(5000, 500);
-					//MessageBeep(MB_NOFOCUS);
+					MessageBeep(MB_NOFOCUS);
 					//Sleep(1000);
 					
 				}
@@ -139,12 +139,9 @@ UINT PeopleDetector::NotifyPeople(LPVOID pParam)
 {
 	PeopleDetector* this_back = (PeopleDetector*)pParam;
 	int i = 0;
-	while (i++ < 250)
-	{
-		MessageBeep(MB_OK);
-	}
-	//MessageBeep(MB_OK);
-	//Sleep(2000);
+	
+	MessageBeep(MB_OK);
+	//Sleep(250);
 	
 	//this_back->flag = true;
 	return 0;
