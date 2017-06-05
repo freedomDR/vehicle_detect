@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "MFCTest1.h"
 #include "MFCTest1Dlg.h"
+#include "BasicInfoDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -70,13 +71,16 @@ BOOL CMFCTest1App::InitInstance()
 	// 例如修改为公司或组织名
 	SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
 
-	CMFCTest1Dlg dlg;
+	//CMFCTest1Dlg dlg;
+	
+	BasicInfoDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{
 		// TODO: 在此放置处理何时用
 		//  “确定”来关闭对话框的代码
+		
 	}
 	else if (nResponse == IDCANCEL)
 	{
