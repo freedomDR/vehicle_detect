@@ -21,8 +21,6 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 {
 	    CMFCTest1Dlg* this_back = (CMFCTest1Dlg*)params;
         Mat img;  //´æ´¢Í¼ÏñÊı¾İ
-		//FILE* f = 0;
-
 
 		if (!caputure.read(img)) return;
 		Mat img_copy;
@@ -42,16 +40,12 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 
 		
 		this->img = img_copy;
-		if (this_back->frame_order % 10 == 0)
+		if (this_back->frame_order % 15 == 0)
 		{
-			//found_filtered_flag = false;
-			//found.clear();
-			//found_filtered.clear();
 			AfxBeginThread(DealPeople, this, 0, 0, 0, 0);
 			
 		}
 
-		
 		
 
 		//»­¾ØĞÎ¿ò
@@ -70,12 +64,8 @@ void PeopleDetector::process2(VideoCapture &caputure, LPVOID params)
 				rectangle(img, r.tl(), r.br(), cv::Scalar(0, 255, 0), 2);  //img-Í¼Æ¬£¬tl----the top-left corner£¬br----the top-left corner£¬Scalar()-¾ØĞÎ¿òÑÕÉ«£¬config6-Ïß¿í
 				if (r.y+r.height >= initBegin && flag_mid == true && this_back->frame_order%30 == 0)
 				{
-					//flag_mid = false;
-					//AfxBeginThread(NotifyPeople, this, 0, 0, 0, 0);
-					//MessageBeep(MB_OK);
-					//Beep(5000, 500);
 					MessageBeep(MB_NOFOCUS);
-					//Sleep(1000);
+					
 					
 				}
 			}
@@ -135,17 +125,6 @@ UINT PeopleDetector::DealPeople(LPVOID pParam)
 	return 0;
 }
 
-UINT PeopleDetector::NotifyPeople(LPVOID pParam)
-{
-	PeopleDetector* this_back = (PeopleDetector*)pParam;
-	int i = 0;
-	
-	MessageBeep(MB_OK);
-	//Sleep(250);
-	
-	//this_back->flag = true;
-	return 0;
-}
 
 
 
